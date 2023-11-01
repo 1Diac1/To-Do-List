@@ -11,6 +11,5 @@ public class TodoItem : BaseAuditableEntity
     public DateTime? CompletionDate { get; set; }
     public TodoStatusTask Type { get; set; }
 
-    [JsonIgnore]
     public IList<TodoTag> Tags { get; set; } = new List<TodoTag>();
 }

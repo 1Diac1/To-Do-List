@@ -9,6 +9,5 @@ public class TodoTag : BaseAuditableEntity
     public KnownColor Color { get; set; }
     public Guid TodoItemId { get; set; }
     
-    [JsonIgnore]
     public TodoItem? TodoItem { get; set; }
 }

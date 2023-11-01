@@ -20,6 +20,13 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
             .ToListAsync();
     }
 
+    public override async Task<TodoItem> GetByIdAsync(Guid id)
+    {
+        return await DbContext.TodoItems
+            .Include(item => item.Tags)
+            .FirstOrDefaultAsync(item => item.Id == id);
+    }
+
     public async Task<IReadOnlyList<TodoItem>> GetTodoItemsByTagNameAsync(string tagName)
     {
         return await base

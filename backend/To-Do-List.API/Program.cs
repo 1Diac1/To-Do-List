@@ -20,10 +20,7 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ValidatorActionFilter>();
     options.ModelValidatorProviders.Clear();
 })
-    .AddNewtonsoftJson(options =>
-    {
-        //options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-    });
+    .AddNewtonsoftJson();
 
 builder.Services.AddFluentValidationAutoValidation();
 

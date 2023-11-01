@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using To_Do_List.Application.Common.Exceptions;
 using To_Do_List.Application.Common.Helpers;
@@ -7,6 +6,7 @@ using To_Do_List.Application.DTOs;
 using To_Do_List.Application.Interfaces;
 using To_Do_List.Domain.Entities;
 using To_Do_List.Domain.Models;
+using AutoMapper;
 
 namespace To_Do_List.API.Controllers;
 
@@ -37,7 +37,7 @@ public class TodoItemController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<BaseResponse> GetByIdAsync(Guid id)
+    public async Task<DataResponse<TodoItemDTO>> GetByIdAsync(Guid id)
     {
         if (id == Guid.Empty)
             throw new BadRequestException("An id can't be null");
@@ -47,7 +47,9 @@ public class TodoItemController : ControllerBase
         if (todoItem is null)
             throw new NotFoundException(nameof(TodoItem), id);
 
-        return BaseResponse.Success();
+        var mappedItem = _mapper.Map<TodoItemDTO>(todoItem);
+
+        return DataResponse<TodoItemDTO>.Success(mappedItem);
     }
 
     [HttpPost]
@@ -102,16 +104,21 @@ public class TodoItemController : ControllerBase
         if (id == Guid.Empty)
             throw new BadRequestException("An id can't be null");
         
-        var user = await _userManager.GetUserAsync(User);
+        //var user = await _userManager.GetUserAsync(User);
 
-        if (user is null)
-            throw new BadRequestException("Unauthorized");
+        //if (user is null)
+        //    throw new BadRequestException("Unauthorized");
         
         var entity = await _todoItemService.GetByIdAsync(id);
 
         if (entity is null)
             throw new NotFoundException(nameof(TodoItem), id);
 
+        var user = new ApplicationUser  
+        {
+            Id = Guid.Parse("64FB4F03-13E8-4804-8E4B-A3388EF7BBB3")
+        };
+        
         await _todoItemService.DeleteAsync(id, user);
 
         return BaseResponse.Success();

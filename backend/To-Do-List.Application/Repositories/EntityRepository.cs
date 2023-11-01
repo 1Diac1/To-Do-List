@@ -37,7 +37,7 @@ public class EntityRepository<TEntity> : IEntityRepository<TEntity>
     public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool disableTracking = true) =>
         await DbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
 
-    public async Task<TEntity> GetByIdAsync(Guid id) =>
+    public virtual async Task<TEntity> GetByIdAsync(Guid id) =>
         await DbContext.Set<TEntity>().FindAsync(id);
 
     public virtual async Task<TEntity> AddAsync(TEntity entity, bool autoSave = true)
