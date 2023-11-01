@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "aH857e8VaxuooqnCxT97Qz9NrLM5BNMgMLhtfoWYgPutYbIKf7ato9CFxLu9YKxouvaTxNzwsZWqbgfVu8PFMA==",
+  "dgSpecHash": "lf1XVnGhmPHPwr7BzJX9Mz6uu17ZU04h8/n++oNvygE3wh+pCR7l+KQAPyTPClSwCkfKXf+t+VU/cEooA1bVDw==",
   "success": true,
   "projectFilePath": "E:\\Programming\\GitProjects\\WebApplications\\To-Do-List\\backend\\To-Do-List.API\\To-Do-List.API.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,8 @@
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.authentication.cookies\\2.2.0\\microsoft.aspnetcore.authentication.cookies.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.authentication.core\\2.2.0\\microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",
+    "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.authorization\\2.2.0\\microsoft.aspnetcore.authorization.2.2.0.nupkg.sha512",
+    "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.authorization.policy\\2.2.0\\microsoft.aspnetcore.authorization.policy.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\7.0.13\\microsoft.aspnetcore.cryptography.internal.7.0.13.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\7.0.13\\microsoft.aspnetcore.cryptography.keyderivation.7.0.13.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.dataprotection\\2.2.0\\microsoft.aspnetcore.dataprotection.2.2.0.nupkg.sha512",
@@ -22,6 +24,11 @@
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.2.0\\microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.identity\\2.2.0\\microsoft.aspnetcore.identity.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\7.0.13\\microsoft.aspnetcore.identity.entityframeworkcore.7.0.13.nupkg.sha512",
+    "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.mvc.abstractions\\2.2.0\\microsoft.aspnetcore.mvc.abstractions.2.2.0.nupkg.sha512",
+    "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.mvc.core\\2.2.5\\microsoft.aspnetcore.mvc.core.2.2.5.nupkg.sha512",
+    "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.responsecaching.abstractions\\2.2.0\\microsoft.aspnetcore.responsecaching.abstractions.2.2.0.nupkg.sha512",
+    "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.routing\\2.2.0\\microsoft.aspnetcore.routing.2.2.0.nupkg.sha512",
+    "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.routing.abstractions\\2.2.0\\microsoft.aspnetcore.routing.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.webutilities\\2.2.0\\microsoft.aspnetcore.webutilities.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",

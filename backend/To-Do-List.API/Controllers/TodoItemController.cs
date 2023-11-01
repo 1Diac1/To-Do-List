@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using To_Do_List.Application.Common.Exceptions;
 using To_Do_List.Application.Interfaces;
 using To_Do_List.Domain.Entities;
 
@@ -28,12 +29,12 @@ public class TodoItemController : ControllerBase
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         if (id == Guid.Empty)
-            return BadRequest("Id can't be null");
+            throw new BadRequestException("An id can't be null");
         
         var todoItem = await _todoItemService.GetByIdAsync(id);
 
         if (todoItem is null)
-            return NotFound("Can't find this item with this Id");
+            throw new NotFoundException(nameof(TodoItem), id);
         
         return Ok(todoItem);
     }
