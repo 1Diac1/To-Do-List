@@ -7,6 +7,7 @@ public interface IEntityRepository<TEntity> where TEntity : BaseEntity
 {
     Task<IReadOnlyList<TEntity>> GetAllAsync();
     Task<IReadOnlyList<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, bool disableTracking = true);
+    Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool disableTracking = true);
 
     Task<TEntity> GetByIdAsync(Guid id);
     Task<TEntity> AddAsync(TEntity entity, bool autoSave = true);

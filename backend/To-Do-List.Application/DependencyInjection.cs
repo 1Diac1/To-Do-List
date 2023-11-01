@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         return services;
     }

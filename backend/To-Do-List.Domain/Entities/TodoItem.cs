@@ -1,13 +1,16 @@
-﻿namespace To_Do_List.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace To_Do_List.Domain.Entities;
 
 public class TodoItem : BaseAuditableEntity
 {
-    public string UserId { get; set; }
+    public Guid UserId { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public DateTime DueDate { get; set; }
     public DateTime? CompletionDate { get; set; }
     public TodoStatusTask Type { get; set; }
 
+    [JsonIgnore]
     public IList<TodoTag> Tags { get; set; } = new List<TodoTag>();
 }

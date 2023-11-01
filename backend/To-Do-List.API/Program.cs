@@ -1,5 +1,6 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using To_Do_List.Application;
 using To_Do_List.Application.Common.Filters;
 using To_Do_List.Infrastructure;
@@ -18,7 +19,11 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ApiExceptionFilter>();
     options.Filters.Add<ValidatorActionFilter>();
     options.ModelValidatorProviders.Clear();
-});
+})
+    .AddNewtonsoftJson(options =>
+    {
+        //options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
 
 builder.Services.AddFluentValidationAutoValidation();
 

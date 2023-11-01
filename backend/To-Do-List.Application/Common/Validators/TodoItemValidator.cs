@@ -36,8 +36,7 @@ public class TodoItemValidator : AbstractValidator<TodoItem>
         return completionDate <= DateTime.Now;
     }
 
-    private bool ContainValidTags(IList<TodoTag>? tags)
-    {
+    private bool ContainValidTags(IList<TodoTag>? tags) {
         return tags is not null && tags.Count > 0;
     }
 }

@@ -7,4 +7,5 @@ public interface ITodoItemService : IEntityRepository<TodoItem>
 {
     Task<IReadOnlyList<TodoItem>> GetTodoItemsByTagNameAsync(string tagName);
     Task<TodoItem> AddAsync(TodoItem entity, ApplicationUser user, bool autoSave = true);
+    Task DeleteAsync(Guid id, ApplicationUser user, bool autoSave = true);
 }
