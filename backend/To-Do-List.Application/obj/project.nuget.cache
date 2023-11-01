@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Qx0W6VgUbSO420Ec1kOO2z5UKpDHOnBuYbXBlmC5aX0cdFzUT6JlSulUGsZdCqd2sLz9PR9W5tIdOE/Kcfx20A==",
+  "dgSpecHash": "WzHRqJsmy7w1fKhuScV9UOqoEszhUGsf/x88MVWoC+PzSForxdr4meGZMryl30CjLpizjkpnY3KxO6uXudzwug==",
   "success": true,
   "projectFilePath": "E:\\Programming\\GitProjects\\WebApplications\\To-Do-List\\backend\\To-Do-List.Application\\To-Do-List.Application.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Computer\\.nuget\\packages\\fluentvalidation\\11.8.0\\fluentvalidation.11.8.0.nupkg.sha512",
+    "C:\\Users\\Computer\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.8.0\\fluentvalidation.dependencyinjectionextensions.11.8.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.authentication.core\\2.2.0\\microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",
     "C:\\Users\\Computer\\.nuget\\packages\\microsoft.aspnetcore.authorization\\2.2.0\\microsoft.aspnetcore.authorization.2.2.0.nupkg.sha512",

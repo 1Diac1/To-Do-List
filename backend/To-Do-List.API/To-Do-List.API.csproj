@@ -12,4 +12,10 @@
       <ProjectReference Include="..\To-Do-List.Infrastructure\To-Do-List.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="11.8.0" />
+      <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
+    </ItemGroup>
+
 </Project>

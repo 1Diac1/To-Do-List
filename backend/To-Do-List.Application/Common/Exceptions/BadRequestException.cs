@@ -10,7 +10,9 @@ public class BadRequestException : Exception
 
     public BadRequestException(string message)
         : base(message)
-    { }
+    {
+        Errors = new[] { message };
+    }
 
     public BadRequestException(IEnumerable<string> errors)
     {

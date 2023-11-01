@@ -105,3 +105,6 @@ E:\Programming\GitProjects\WebApplications\To-Do-List\backend\To-Do-List.API\bin
 E:\Programming\GitProjects\WebApplications\To-Do-List\backend\To-Do-List.API\bin\Debug\net7.0\To-Do-List.Domain.pdb
 E:\Programming\GitProjects\WebApplications\To-Do-List\backend\To-Do-List.API\obj\Debug\net7.0\To-Do-List.API.csproj.CopyComplete
 E:\Programming\GitProjects\WebApplications\To-Do-List\backend\To-Do-List.API\obj\Debug\net7.0\To-Do-List.API.MvcApplicationPartsAssemblyInfo.cs
+E:\Programming\GitProjects\WebApplications\To-Do-List\backend\To-Do-List.API\bin\Debug\net7.0\FluentValidation.dll
+E:\Programming\GitProjects\WebApplications\To-Do-List\backend\To-Do-List.API\bin\Debug\net7.0\FluentValidation.DependencyInjectionExtensions.dll
+E:\Programming\GitProjects\WebApplications\To-Do-List\backend\To-Do-List.API\bin\Debug\net7.0\FluentValidation.AspNetCore.dll

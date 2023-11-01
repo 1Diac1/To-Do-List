@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using To_Do_List.Application.Common.Exceptions;
 
@@ -9,7 +10,8 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
     private static readonly IDictionary<Type, Action<ExceptionContext>> ExceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
         {
             [typeof(BadRequestException)] = HandleBadRequestException,
-            [typeof(NotFoundException)] = HandleNotFoundException
+            [typeof(NotFoundException)] = HandleNotFoundException,
+            [typeof(ValidationException)] = HandleFluentValidationException
         };
 
     public override void OnException(ExceptionContext context)
@@ -44,7 +46,7 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
 
         var details = new ProblemDetails
         {
-            Title = "Bad request"
+            Title = "Bad request",
         };
 
         details.Extensions.Add("errors", exception.Errors);
@@ -64,6 +66,21 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
         };
 
         context.Result = new NotFoundObjectResult(details);
+        context.ExceptionHandled = true;
+    }
+
+    private static void HandleFluentValidationException(ExceptionContext context)
+    {
+        var exception = (ValidationException)context.Exception;
+        
+        var details = new ProblemDetails
+        {
+            Title = "Validation failed"
+        };
+        
+        details.Extensions.Add("errors", exception.Errors.Select(e => e.ErrorMessage));
+        
+        context.Result = new BadRequestObjectResult(details);
         context.ExceptionHandled = true;
     }
 }

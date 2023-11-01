@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using To_Do_List.Application.Common.Exceptions;
 using To_Do_List.Application.Common.Helpers;
 using To_Do_List.Application.Interfaces;
 using To_Do_List.Domain.Entities;
+using To_Do_List.Domain.Models;
 
 namespace To_Do_List.API.Controllers;
 
@@ -10,11 +12,15 @@ namespace To_Do_List.API.Controllers;
 [ApiController]
 public class TodoItemController : ControllerBase
 {
+    // TODO: сделать Requests и DTO
+    // TODO: прочитать и сделать HttpPatch
     private readonly ITodoItemService _todoItemService;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public TodoItemController(ITodoItemService todoItemService)
+    public TodoItemController(ITodoItemService todoItemService, UserManager<ApplicationUser> userManager)
     {
         this._todoItemService = todoItemService;
+        _userManager = userManager;
     }
 
     [HttpGet]
@@ -35,6 +41,51 @@ public class TodoItemController : ControllerBase
 
         if (todoItem is null)
             throw new NotFoundException(nameof(TodoItem), id);
+
+        return BaseResponse.Success();
+    }
+
+    [HttpPost]
+    public async Task<BaseResponse> CreateAsync([FromBody] TodoItem entity)
+    {
+        if (entity is null)
+            throw new BadRequestException("An item can't be null");
+
+        var user = await _userManager.GetUserAsync(User);
+
+        if (user is null)
+            throw new BadRequestException("Unauthorized");
+        
+        var createdEntity = await _todoItemService.AddAsync(entity, user);
+        
+        return BaseResponse.Success();
+    }
+
+    [HttpPut]
+    public async Task<BaseResponse> UpdateAsync([FromBody] TodoItem entity)
+    {
+        if (entity is null)
+            throw new BadRequestException("An item can't be null");
+
+        var entityToUpdate = await _todoItemService.GetByIdAsync(entity.Id);
+
+        if (entityToUpdate is null)
+            throw new NotFoundException(nameof(TodoItem), entity.Id);
+
+        await _todoItemService.UpdateAsync(entityToUpdate);
+
+        return BaseResponse.Success();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<BaseResponse> DeleteAsync(Guid id)
+    {
+        var entity = await _todoItemService.GetByIdAsync(id);
+
+        if (entity is null)
+            throw new NotFoundException(nameof(TodoItem), id);
+
+        await _todoItemService.DeleteAsync(entity);
 
         return BaseResponse.Success();
     }
