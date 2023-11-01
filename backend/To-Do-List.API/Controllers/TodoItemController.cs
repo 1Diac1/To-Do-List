@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using To_Do_List.Application.Common.Exceptions;
+using To_Do_List.Application.Common.Helpers;
 using To_Do_List.Application.Interfaces;
 using To_Do_List.Domain.Entities;
 
@@ -17,16 +18,15 @@ public class TodoItemController : ControllerBase
     }
 
     [HttpGet]
-    // TODO: Сделать ApiResponse, и через него делать ответы
-    public async Task<ActionResult<IReadOnlyList<TodoItem>>> GetAllAsync()
+    public async Task<DataResponse<IReadOnlyList<TodoItem>>> GetAllAsync()
     {
         var items = await _todoItemService.GetAllAsync();
 
-        return Ok(items);
+        return DataResponse<IReadOnlyList<TodoItem>>.Success(items);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetByIdAsync(Guid id)
+    public async Task<BaseResponse> GetByIdAsync(Guid id)
     {
         if (id == Guid.Empty)
             throw new BadRequestException("An id can't be null");
@@ -35,9 +35,7 @@ public class TodoItemController : ControllerBase
 
         if (todoItem is null)
             throw new NotFoundException(nameof(TodoItem), id);
-        
-        return Ok(todoItem);
+
+        return BaseResponse.Success();
     }
-    
-    
 }
