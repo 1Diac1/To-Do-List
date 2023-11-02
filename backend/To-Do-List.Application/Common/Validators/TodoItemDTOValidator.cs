@@ -1,11 +1,13 @@
 ﻿using FluentValidation;
+using To_Do_List.Application.DTOs;
 using To_Do_List.Domain.Entities;
+using To_Do_List.Domain.Enums;
 
 namespace To_Do_List.Application.Common.Validators;
 
-public class TodoItemValidator : AbstractValidator<TodoItem>
+public class TodoItemDTOValidator : AbstractValidator<TodoItemDTO>
 {
-    public TodoItemValidator()
+    public TodoItemDTOValidator()
     {
         RuleFor(item => item.Title)
             .NotEmpty().WithMessage("Title can't be null")
@@ -17,11 +19,11 @@ public class TodoItemValidator : AbstractValidator<TodoItem>
         
         RuleFor(item => item.DueDate)
             .GreaterThan(DateTime.Now).WithMessage("{PropertyName} should be in the future");
-        
-        RuleFor(item => item.CompletionDate)
-            .Must(BeValidCompletionDate).WithMessage("{PropertyName} must be empty or in the past");
 
         RuleFor(item => item.Type)
+            .IsInEnum().WithMessage("Invalid value for the {PropertyName} type");
+        
+        RuleFor(item => item.TodoPriorityLevel)
             .IsInEnum().WithMessage("Invalid value for the {PropertyName} type");
 
         RuleFor(item => item.Tags)
@@ -36,7 +38,7 @@ public class TodoItemValidator : AbstractValidator<TodoItem>
         return completionDate <= DateTime.Now;
     }
 
-    private bool ContainValidTags(IList<TodoTag>? tags) {
+    private bool ContainValidTags(IList<TodoTagDTO>? tags) {
         return tags is not null && tags.Count > 0;
     }
 }

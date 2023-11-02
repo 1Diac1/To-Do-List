@@ -7,6 +7,8 @@ using To_Do_List.Application.Interfaces;
 using To_Do_List.Domain.Entities;
 using To_Do_List.Domain.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
+using To_Do_List.Domain.Enums;
 
 namespace To_Do_List.API.Controllers;
 
@@ -15,7 +17,7 @@ namespace To_Do_List.API.Controllers;
 public class TodoItemController : ControllerBase
 {
     // TODO: прочитать и сделать HttpPatch
-    // TODO: вынести получения пользователя в отдельный фильтр или атрибут
+    // TODO: вынести в константы стандартные ошибки BadRequest 
     private readonly ITodoItemService _todoItemService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
@@ -75,28 +77,48 @@ public class TodoItemController : ControllerBase
         return BaseResponse.Success();
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     public async Task<BaseResponse> UpdateAsync([FromBody] TodoItemDTO entity, Guid id)
     {
         if (entity is null)
             throw new BadRequestException("An item can't be null");
 
-        var user = await _userManager.GetUserAsync(User);
+        //var user = await _userManager.GetUserAsync(User);
 
-        if (user is null)
-            throw new BadRequestException("Unauthorized");
+        //if (user is null)
+        //    throw new BadRequestException("Unauthorized");
+
+        var user = new ApplicationUser { Id = Guid.Parse("BEE42B62-692D-4D4C-9C1D-700A76944135") };
         
-        var entityToUpdate = await _todoItemService.GetByIdAsync(id);
+        var entityToUpdate = await _todoItemService.GetAsync(id, user);
 
         if (entityToUpdate is null)
             throw new NotFoundException(nameof(TodoItem), id);
 
-        entityToUpdate = _mapper.Map<TodoItem>(entity);
+        _mapper.Map(entity, entityToUpdate);
         
         await _todoItemService.UpdateAsync(entityToUpdate);
 
         return BaseResponse.Success();
     }
+
+    [HttpPatch("{id:Guid}")]
+    public async Task<BaseResponse> UpdateStatusAsync(Guid id, [FromBody] JsonPatchDocument<TodoItemForUpdateStatusDTO> status)
+    {
+        if (id == Guid.Empty)
+            throw new BadRequestException("An id can't be null");
+
+        var user = new ApplicationUser { Id = Guid.Parse("BEE42B62-692D-4D4C-9C1D-700A76944135") };
+
+        var entity = await _todoItemService.GetAsync(id, user);
+
+        if (entity is null)
+            throw new NotFoundException(nameof(TodoItem), id);
+
+        await _todoItemService.UpdatePatchAsync(entity, status);
+        
+        return BaseResponse.Success();
+    } 
 
     [HttpDelete("{id}")]
     public async Task<BaseResponse> DeleteAsync(Guid id)

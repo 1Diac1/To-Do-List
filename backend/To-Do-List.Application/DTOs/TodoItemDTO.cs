@@ -10,7 +10,7 @@ public class TodoItemDTO
     public string Description { get; set; }
     public DateTime DueDate { get; set; }
     public TodoStatusTask Type { get; set; }
+    public TodoPriorityLevel TodoPriorityLevel { get; set; }
 
-    [JsonIgnore]
     public IList<TodoTagDTO> Tags { get; set; } = new List<TodoTagDTO>();
 }

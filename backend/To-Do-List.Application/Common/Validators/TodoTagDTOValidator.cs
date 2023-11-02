@@ -1,12 +1,13 @@
 ﻿using System.Drawing;
 using FluentValidation;
+using To_Do_List.Application.DTOs;
 using To_Do_List.Domain.Entities;
 
 namespace To_Do_List.Application.Common.Validators;
 
-public class TodoTagValidator : AbstractValidator<TodoTag>
+public class TodoTagDTOValidator : AbstractValidator<TodoTagDTO>
 {
-    public TodoTagValidator()
+    public TodoTagDTOValidator()
     {
         RuleFor(item => item.Name)
             .NotEmpty().WithMessage("{PropertyName} can't be null")
