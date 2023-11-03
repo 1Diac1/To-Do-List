@@ -1,24 +1,28 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
-using To_Do_List.Application.Common.Exceptions;
-using To_Do_List.Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
 using To_Do_List.Application.Interfaces;
 using To_Do_List.Application.Repositories;
+using To_Do_List.Domain.Common;
 using To_Do_List.Domain.Entities;
 using To_Do_List.Domain.Enums;
 using To_Do_List.Domain.Models;
+using AutoMapper;
+using FluentValidation;
+using Microsoft.AspNetCore.JsonPatch;
+using To_Do_List.Application.Common.Exceptions;
+using To_Do_List.Application.Common.Validators;
 
 namespace To_Do_List.Application.Services;
 
 public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
 {
     private readonly IMapper _mapper;
+    private readonly IValidationService _validationService;
     
-    public TodoItemService(IApplicationDbContext dbContext, IMapper mapper) 
+    public TodoItemService(IApplicationDbContext dbContext, IMapper mapper, IValidationService validationService) 
         : base(dbContext)
     {
         _mapper = mapper;
+        _validationService = validationService;
     }
 
     public override async Task<IReadOnlyList<TodoItem>> GetAllAsync()
@@ -43,8 +47,8 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
 
     public async Task<TodoItem> AddAsync(TodoItem entity, ApplicationUser user, bool autoSave = true)
     {
-        entity.Type = TodoStatusTask.InProgress;
-        entity.TodoPriorityLevel = TodoPriorityLevel.Low;
+        entity.StatusTask = TodoStatusTask.InProgress;
+        entity.PriorityLevel = TodoPriorityLevel.Low;
         entity.UserId = user.Id;
         entity.Created = DateTime.Now;
         entity.Modified = DateTime.Now;
@@ -59,20 +63,28 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
             .FirstOrDefaultAsync(item => item.Id == id && item.UserId == user.Id);
     }
 
-    public async Task UpdatePatchAsync(TodoItem entity, JsonPatchDocument<TodoItemForUpdateStatusDTO> document)
+    public async Task UpdatePatchAsync<T>(TodoItem entity, JsonPatchDocument patchDocument)
+        where T : BaseEntityDTO
     {
-        var entityToPatch = _mapper.Map<TodoItemForUpdateStatusDTO>(entity);
+        var mappedEntity = _mapper.Map<T>(entity);
         
-        document.ApplyTo(entityToPatch);
+        patchDocument.ApplyTo(mappedEntity);
 
-        if (Enum.IsDefined(typeof(TodoStatusTask), entityToPatch.Type) is false)
-            throw new BadRequestException("Value is not in the range");
+        var validatorForType = _validationService.GetValidatorForType<T>();
 
-        _mapper.Map(entityToPatch, entity);
+        if (validatorForType is null)
+            throw new BadRequestException($"Service for type {typeof(T)} was not found");
+        
+        var validation = await validatorForType.ValidateAsync(mappedEntity);
 
+        if (validation.IsValid is false)
+            throw new ValidationException(validation.Errors);
+        
+        _mapper.Map(mappedEntity, entity);
+        
         await SaveAsync();
     }
-
+    
     public override async Task UpdateAsync(TodoItem entity, bool autoSave = true)
     {
         entity.Modified = DateTime.Now;

@@ -20,16 +20,21 @@ public class TodoItemDTOValidator : AbstractValidator<TodoItemDTO>
         RuleFor(item => item.DueDate)
             .GreaterThan(DateTime.Now).WithMessage("{PropertyName} should be in the future");
 
-        RuleFor(item => item.Type)
-            .IsInEnum().WithMessage("Invalid value for the {PropertyName} type");
+        RuleFor(item => item.StatusTask)
+            .Must(BeValidValue).WithMessage("Invalid value for the {PropertyName} type");
         
-        RuleFor(item => item.TodoPriorityLevel)
+        RuleFor(item => item.PriorityLevel)
             .IsInEnum().WithMessage("Invalid value for the {PropertyName} type");
 
         RuleFor(item => item.Tags)
             .Must(ContainValidTags).WithMessage("{PropertyName} can't be empty and must contain valid tags");
     }
 
+    private bool BeValidValue(TodoStatusTask status)
+    {
+        return Enum.IsDefined(typeof(TodoStatusTask), status);
+    }
+    
     private bool BeValidCompletionDate(DateTime? completionDate)
     {
         if (completionDate.HasValue is false)

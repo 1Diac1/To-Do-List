@@ -9,8 +9,8 @@ public class TodoItem : BaseAuditableEntity
     public string Description { get; set; }
     public DateTime DueDate { get; set; }
     public DateTime? CompletionDate { get; set; }
-    public TodoStatusTask Type { get; set; }
-    public TodoPriorityLevel TodoPriorityLevel { get; set; }
+    public TodoStatusTask StatusTask { get; set; }
+    public TodoPriorityLevel PriorityLevel { get; set; }
 
     public IList<TodoTag> Tags { get; set; } = new List<TodoTag>();
 }

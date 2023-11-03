@@ -11,7 +11,10 @@ public class TodoItemMapping : Profile
         CreateMap<TodoItem, TodoItemDTO>();
         CreateMap<TodoItemDTO, TodoItem>();
 
-        CreateMap<TodoItem, TodoItemForUpdateStatusDTO>();
-        CreateMap<TodoItemForUpdateStatusDTO, TodoItem>();
+        CreateMap<TodoItem, TodoItemForPatchDTO>();
+        CreateMap<TodoItemForPatchDTO, TodoItem>();
+
+        CreateMap<TodoItem, TodoItemForUpdatePriorityLevelDTO>();
+        CreateMap<TodoItemForUpdatePriorityLevelDTO, TodoItem>();
     }
 }

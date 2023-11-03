@@ -4,11 +4,10 @@ using To_Do_List.Application.Common.Exceptions;
 using To_Do_List.Application.Common.Helpers;
 using To_Do_List.Application.DTOs;
 using To_Do_List.Application.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using To_Do_List.Domain.Entities;
 using To_Do_List.Domain.Models;
 using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
-using To_Do_List.Domain.Enums;
 
 namespace To_Do_List.API.Controllers;
 
@@ -24,7 +23,7 @@ public class TodoItemController : ControllerBase
 
     public TodoItemController(ITodoItemService todoItemService, UserManager<ApplicationUser> userManager, IMapper mapper)
     {
-        this._todoItemService = todoItemService;
+        _todoItemService = todoItemService;
         _userManager = userManager;
         _mapper = mapper;
     }
@@ -69,7 +68,7 @@ public class TodoItemController : ControllerBase
     
         var user = new ApplicationUser
         {
-            Id = Guid.NewGuid()
+            Id = Guid.Parse("8B3CA57D-77ED-423E-AED4-1CE2737D83E5")
         };
         
          await _todoItemService.AddAsync(mappedEntity, user);
@@ -102,23 +101,23 @@ public class TodoItemController : ControllerBase
         return BaseResponse.Success();
     }
 
-    [HttpPatch("{id:Guid}")]
-    public async Task<BaseResponse> UpdateStatusAsync(Guid id, [FromBody] JsonPatchDocument<TodoItemForUpdateStatusDTO> status)
+    [HttpPatch("{id:guid}")]
+    public async Task<BaseResponse> UpdateStatusAsync(Guid id, [FromBody] JsonPatchDocument status)
     {
         if (id == Guid.Empty)
             throw new BadRequestException("An id can't be null");
 
-        var user = new ApplicationUser { Id = Guid.Parse("BEE42B62-692D-4D4C-9C1D-700A76944135") };
+        var user = new ApplicationUser { Id = Guid.Parse("8B3CA57D-77ED-423E-AED4-1CE2737D83E5") };
 
         var entity = await _todoItemService.GetAsync(id, user);
-
+        
         if (entity is null)
             throw new NotFoundException(nameof(TodoItem), id);
 
-        await _todoItemService.UpdatePatchAsync(entity, status);
+        await _todoItemService.UpdatePatchAsync<TodoItemForPatchDTO>(entity, status);
         
         return BaseResponse.Success();
-    } 
+    }
 
     [HttpDelete("{id}")]
     public async Task<BaseResponse> DeleteAsync(Guid id)
