@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using To_Do_List.Application.Common.Exceptions;
 using To_Do_List.Application.Common.Helpers;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using To_Do_List.Domain.Entities;
 using To_Do_List.Domain.Models;
 using AutoMapper;
+using FluentValidation;
+using To_Do_List.Domain.Enums;
 
 namespace To_Do_List.API.Controllers;
 
@@ -15,8 +18,8 @@ namespace To_Do_List.API.Controllers;
 [ApiController]
 public class TodoItemController : ControllerBase
 {
-    // TODO: прочитать и сделать HttpPatch
-    // TODO: вынести в константы стандартные ошибки BadRequest 
+    // TODO: вынести в константы стандартные ошибки BadRequest
+    // TODO: вынести все валидации в фильтры
     private readonly ITodoItemService _todoItemService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
@@ -53,6 +56,68 @@ public class TodoItemController : ControllerBase
         return DataResponse<TodoItemDTO>.Success(mappedItem);
     }
 
+    [HttpGet("tag/{tagName}")]
+    public async Task<DataResponse<IReadOnlyList<TodoItemDTO>>> GetTodoItemsByTagNameAsync(string tagName)
+    {
+        if (string.IsNullOrWhiteSpace(tagName))
+            throw new BadRequestException("Tag can't be null");
+        
+        // var user (Найти настоящего пользователя)
+
+        var user = new ApplicationUser() { Id = Guid.Parse("8B3CA57D-77ED-423E-AED4-1CE2737D83E5") };
+
+        var todoItems = await _todoItemService.GetTodoItemsByTagNameAsync(tagName, user);
+        var mappedItems = _mapper.Map<IReadOnlyList<TodoItemDTO>>(todoItems);
+
+        return DataResponse<IReadOnlyList<TodoItemDTO>>.Success(mappedItems);
+    }
+
+    [HttpGet("status/{status}")]
+    public async Task<DataResponse<IReadOnlyList<TodoItemDTO>>> GetTodoItemsByStatusTaskAsync(TodoStatusTask status)
+    {
+        var isDefined = Enum.IsDefined(typeof(TodoStatusTask), status);
+        
+        if (isDefined is false)
+            throw new BadRequestException("Invalid value for status task");
+        
+        // (проверка пользователя)
+
+        var user = new ApplicationUser() { Id = Guid.Parse("8B3CA57D-77ED-423E-AED4-1CE2737D83E5") };
+
+        var todoItems = await _todoItemService.GetTodoItemsByStatusTaskAsync(status, user);
+        var mappedItems = _mapper.Map<IReadOnlyList<TodoItemDTO>>(todoItems);
+
+        return DataResponse<IReadOnlyList<TodoItemDTO>>.Success(mappedItems);
+    }
+
+    [HttpGet("due/{dueDate:datetime}")]
+    public async Task<DataResponse<IReadOnlyList<TodoItemDTO>>> GetTodoItemsByDueDateAsync(DateTime dueDate)
+    {
+        if (dueDate < DateTime.Now)
+            throw new BadRequestException("Date can't be past");
+        
+        // (проверка пользователя)
+
+        var user = new ApplicationUser() { Id = Guid.Parse("8B3CA57D-77ED-423E-AED4-1CE2737D83E5") };
+
+        var todoItems = await _todoItemService.GetTodoItemsByDueDateAsync(dueDate, user);
+        var mappedItems = _mapper.Map<IReadOnlyList<TodoItemDTO>>(todoItems);
+
+        return DataResponse<IReadOnlyList<TodoItemDTO>>.Success(mappedItems);
+    }
+
+    [HttpGet("stats")]
+    public async Task<DataResponse<TodoItemStatistics>> GetTodoItemsStatisticsAsync()
+    {
+        // (проверка пользователя)
+
+        var user = new ApplicationUser() { Id = Guid.Parse("8B3CA57D-77ED-423E-AED4-1CE2737D83E5") };
+
+        var stats = await _todoItemService.GetTodoItemsStatisticsAsync(user);
+
+        return DataResponse<TodoItemStatistics>.Success(stats);
+    }
+    
     [HttpPost]
     public async Task<BaseResponse> CreateAsync([FromBody] TodoItemDTO entity)
     {
@@ -65,11 +130,8 @@ public class TodoItemController : ControllerBase
         //    throw new BadRequestException("Unauthorized");
 
         var mappedEntity = _mapper.Map<TodoItem>(entity);
-    
-        var user = new ApplicationUser
-        {
-            Id = Guid.Parse("8B3CA57D-77ED-423E-AED4-1CE2737D83E5")
-        };
+
+        var user = new ApplicationUser { Id = Guid.Parse("8B3CA57D-77ED-423E-AED4-1CE2737D83E5") };
         
          await _todoItemService.AddAsync(mappedEntity, user);
         
@@ -102,7 +164,7 @@ public class TodoItemController : ControllerBase
     }
 
     [HttpPatch("{id:guid}")]
-    public async Task<BaseResponse> UpdateStatusAsync(Guid id, [FromBody] JsonPatchDocument status)
+    public async Task<BaseResponse> UpdatePatchAsync(Guid id, [FromBody] JsonPatchDocument<TodoItemForPatchDTO> status)
     {
         if (id == Guid.Empty)
             throw new BadRequestException("An id can't be null");
@@ -114,6 +176,8 @@ public class TodoItemController : ControllerBase
         if (entity is null)
             throw new NotFoundException(nameof(TodoItem), id);
 
+        entity.Modified = DateTime.Now;
+        
         await _todoItemService.UpdatePatchAsync<TodoItemForPatchDTO>(entity, status);
         
         return BaseResponse.Success();

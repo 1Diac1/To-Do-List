@@ -39,10 +39,67 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
             .FirstOrDefaultAsync(item => item.Id == id);
     }
 
-    public async Task<IReadOnlyList<TodoItem>> GetTodoItemsByTagNameAsync(string tagName)
+    public async Task<IReadOnlyList<TodoItem>> GetTodoItemsByTagNameAsync(string tagName, ApplicationUser user)
     {
-        return await base
-            .GetAllAsync(item => item.Tags.Any(tag => tag.Name == tagName));
+        return await base.DbContext.TodoItems
+            .Include(item => item.Tags)
+            .Where(item => item.Tags.Any(tag => tag.Name == tagName) &&
+                           item.UserId == user.Id)
+            .ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<TodoItem>> GetTodoItemsByStatusTaskAsync(TodoStatusTask status, ApplicationUser user)
+    {
+        return await base.DbContext.TodoItems
+            .Include(item => item.Tags)
+            .Where(item => item.UserId == user.Id &&
+                           item.StatusTask == status)
+            .ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<TodoItem>> GetTodoItemsByDueDateAsync(DateTime date, ApplicationUser user)
+    {
+        return await base.DbContext.TodoItems
+            .Include(item => item.Tags)
+            .Where(item => item.DueDate.Date == date.Date)
+            .ToListAsync();
+    }
+
+    public async Task<TodoItemStatistics> GetTodoItemsStatisticsAsync(ApplicationUser user)
+    {
+        var todoItems = await base.DbContext.TodoItems
+            .Include(item => item.Tags)
+            .Where(item => item.UserId == user.Id)
+            .ToListAsync();
+
+        var completedTasks = todoItems
+            .Where(item => item is { StatusTask: TodoStatusTask.Completed, CompletionDate: not null })
+            .ToList();
+
+        var priorityCounts = todoItems.GroupBy(item => item.PriorityLevel)
+            .ToDictionary(g => g.Key, g => g.Count());
+        
+        var tagsCounts = new Dictionary<string, int>();
+        
+        foreach (var tags in todoItems.Select(item => item.Tags))
+            foreach (var tag in tags)
+                tagsCounts.TryAdd(tag.Name, todoItems.Count(item => item.Tags.Any(t => t.Name == tag.Name)));
+
+        var totalCompletionTime = completedTasks
+            .Sum(t => (t.CompletionDate - t.Created)?.TotalHours);
+        
+        var statistics = new TodoItemStatistics
+            {
+                TotalTasks = todoItems.Count,
+                TotalInProgressTasks = todoItems.Count(t => t.StatusTask == TodoStatusTask.InProgress),
+                TotalPendingTasks = todoItems.Count(t => t.StatusTask == TodoStatusTask.Pending),
+                TotalCompletedTasks = todoItems.Count(t => t.StatusTask == TodoStatusTask.Completed),
+                AverageTaskCompletionTime = completedTasks.Count > 0 ? totalCompletionTime / completedTasks.Count : 0,
+                PriorityCounts = priorityCounts,
+                TagsCounts = tagsCounts
+            };
+
+        return statistics;
     }
 
     public async Task<TodoItem> AddAsync(TodoItem entity, ApplicationUser user, bool autoSave = true)
@@ -63,7 +120,7 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
             .FirstOrDefaultAsync(item => item.Id == id && item.UserId == user.Id);
     }
 
-    public async Task UpdatePatchAsync<T>(TodoItem entity, JsonPatchDocument patchDocument)
+    public async Task UpdatePatchAsync<T>(TodoItem entity, JsonPatchDocument<T> patchDocument)
         where T : BaseEntityDTO
     {
         var mappedEntity = _mapper.Map<T>(entity);
@@ -79,9 +136,13 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
 
         if (validation.IsValid is false)
             throw new ValidationException(validation.Errors);
-        
+
         _mapper.Map(mappedEntity, entity);
-        
+
+        entity.CompletionDate = entity.StatusTask is TodoStatusTask.Completed
+            ? DateTime.Now 
+            : null;
+
         await SaveAsync();
     }
     
