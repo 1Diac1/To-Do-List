@@ -9,27 +9,42 @@ namespace To_Do_List.Application.Repositories;
 public class EntityRepository<TEntity> : IEntityRepository<TEntity>
     where TEntity : BaseEntity
 {
-    private readonly IApplicationDbContext _dbContext;
+    protected readonly IApplicationDbContext DbContext;
 
     protected EntityRepository(IApplicationDbContext dbContext)
     {
-        this._dbContext = dbContext;
+        this.DbContext = dbContext;
     }
 
-    public async Task<IReadOnlyList<TEntity>> GetAllAsync() =>
-        await _dbContext.Set<TEntity>().ToListAsync();
+    public virtual async Task<IReadOnlyList<TEntity>> GetAllAsync() =>
+        await DbContext.Set<TEntity>().ToListAsync();
 
-    public async Task<IReadOnlyList<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, bool disableTracking = true) =>
-        await _dbContext.Set<TEntity>().Where(predicate).ToListAsync();
+    public virtual async Task<IReadOnlyList<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate,
+        bool disableTracking = true)
+    {
+        if (disableTracking)
+            return await DbContext.Set<TEntity>()
+                .AsNoTracking()
+                .Where(predicate)
+                .ToListAsync();
+        
+        return await DbContext
+            .Set<TEntity>()
+            .Where(predicate)
+            .ToListAsync();
+    }
 
-    public async Task<TEntity> GetByIdAsync(Guid id) =>
-        await _dbContext.Set<TEntity>().FindAsync(id);
+    public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool disableTracking = true) =>
+        await DbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+
+    public virtual async Task<TEntity> GetByIdAsync(Guid id) =>
+        await DbContext.Set<TEntity>().FindAsync(id);
 
     public virtual async Task<TEntity> AddAsync(TEntity entity, bool autoSave = true)
     {
         entity.Id = Guid.NewGuid();
 
-        await _dbContext.Set<TEntity>().AddAsync(entity);
+        await DbContext.Set<TEntity>().AddAsync(entity);
 
         if (autoSave is true)
             await SaveAsync();
@@ -39,7 +54,7 @@ public class EntityRepository<TEntity> : IEntityRepository<TEntity>
 
     public virtual async Task UpdateAsync(TEntity entity, bool autoSave = true)
     {
-        _dbContext.Set<TEntity>().Entry(entity).State = EntityState.Modified;
+        DbContext.Set<TEntity>().Entry(entity).State = EntityState.Modified;
 
         if (autoSave is true)
             await SaveAsync();
@@ -47,12 +62,12 @@ public class EntityRepository<TEntity> : IEntityRepository<TEntity>
 
     public virtual async Task DeleteAsync(TEntity entity, bool autoSave = true)
     {
-        _dbContext.Set<TEntity>().Remove(entity);
+        DbContext.Set<TEntity>().Remove(entity);
 
         if (autoSave)
             await SaveAsync();
     }
 
     public async Task SaveAsync() =>
-        await _dbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync();
 }

@@ -1,4 +1,6 @@
-﻿namespace To_Do_List.Application.Common.Exceptions;
+﻿using Type = System.Type;
+
+namespace To_Do_List.Application.Common.Exceptions;
 
 public class BadRequestException : Exception
 {
@@ -10,8 +12,20 @@ public class BadRequestException : Exception
 
     public BadRequestException(string message)
         : base(message)
-    { }
+    {
+        Errors = new[] { message };
+    }
 
+    public BadRequestException(string message, Type type)
+    {
+        Errors = new[] { message + "(" + typeof(Type) + ")" };
+    }
+
+    public BadRequestException(string message, string property)
+    {
+        Errors = new[] { message + $"({property})" };
+    }
+    
     public BadRequestException(IEnumerable<string> errors)
     {
         Errors = errors;
