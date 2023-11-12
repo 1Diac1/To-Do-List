@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using To_Do_List.Application.Common.Filters;
 using To_Do_List.Application.Common.Validators;
 using To_Do_List.Application.DTOs;
 using To_Do_List.Application.Interfaces;
@@ -17,6 +18,8 @@ public static class DependencyInjection
         services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
         
         services.AddSingleton<IValidationService, ValidationService>();
+        
+        services.AddScoped<AuthorizationFilter>();
         
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddAutoMapper(Assembly.GetExecutingAssembly());

@@ -1,15 +1,16 @@
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using To_Do_List.Application;
 using To_Do_List.Application.Common.Filters;
+using FluentValidation.AspNetCore;
+using To_Do_List.API.Extensions;
 using To_Do_List.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using To_Do_List.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 
+builder.Services.ConfigureJwtAuthentication();
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true);
@@ -25,6 +26,9 @@ builder.Services.AddControllers(options =>
 builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

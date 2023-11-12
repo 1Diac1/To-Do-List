@@ -10,6 +10,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using To_Do_List.Application.Common.Exceptions;
 using To_Do_List.Application.Common.Validators;
+using To_Do_List.Application.DTOs;
 
 namespace To_Do_List.Application.Services;
 
@@ -61,7 +62,18 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
     {
         return await base.DbContext.TodoItems
             .Include(item => item.Tags)
-            .Where(item => item.DueDate.Date == date.Date)
+            .Where(item => item.UserId == user.Id && 
+                           item.DueDate.Date == date.Date)
+            .ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<TodoItem>> GetSortedIncompleteTodoItemsAsync(ApplicationUser user)
+    {
+        return await base.DbContext.TodoItems
+            .Include(item => item.Tags)
+            .Where(item => item.UserId == user.Id &&
+                           item.StatusTask != TodoStatusTask.Completed)
+            .OrderByDescending(item => item.DueDate)
             .ToListAsync();
     }
 
@@ -102,6 +114,21 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
         return statistics;
     }
 
+    public async Task<IReadOnlyList<TodoItem>> GetTodoItemsByUserIdAsync(Guid id)
+    {
+        return await base.DbContext.TodoItems
+            .Include(item => item.Tags)
+            .Where(item => item.UserId == id)
+            .ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<TodoTag>> GetTodoTagsAsync(ApplicationUser user)
+    {
+        return await base.DbContext.TodoTags
+            .Where(item => item.UserId == user.Id)
+            .ToListAsync();
+    }
+
     public async Task<TodoItem> AddAsync(TodoItem entity, ApplicationUser user, bool autoSave = true)
     {
         entity.StatusTask = TodoStatusTask.InProgress;
@@ -109,6 +136,7 @@ public class TodoItemService : EntityRepository<TodoItem>, ITodoItemService
         entity.UserId = user.Id;
         entity.Created = DateTime.Now;
         entity.Modified = DateTime.Now;
+        entity.Tags.ToList().ForEach(item => item.UserId = user.Id);
 
         return await base.AddAsync(entity, autoSave);
     }

@@ -11,7 +11,8 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
         {
             [typeof(BadRequestException)] = HandleBadRequestException,
             [typeof(NotFoundException)] = HandleNotFoundException,
-            [typeof(ValidationException)] = HandleFluentValidationException
+            [typeof(ValidationException)] = HandleFluentValidationException,
+            [typeof(UnauthorizedException)] = HandleUnauthorizedException
         };
 
     public override void OnException(ExceptionContext context)
@@ -47,6 +48,7 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
         var details = new ProblemDetails
         {
             Title = "Bad request",
+            Status = 400
         };
 
         details.Extensions.Add("errors", exception.Errors);
@@ -62,7 +64,8 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
         var details = new ProblemDetails
         {
             Title = "The specified resource was not found",
-            Detail = exception.Message
+            Detail = exception.Message,
+            Status = 404
         };
 
         context.Result = new NotFoundObjectResult(details);
@@ -75,12 +78,27 @@ public class ApiExceptionFilter : ExceptionFilterAttribute
         
         var details = new ProblemDetails
         {
-            Title = "Validation failed"
+            Title = "Validation failed",
+            Status = 400
         };
         
         details.Extensions.Add("errors", exception.Errors.Select(e => e.ErrorMessage));
         
         context.Result = new BadRequestObjectResult(details);
+        context.ExceptionHandled = true;
+    }
+
+    private static void HandleUnauthorizedException(ExceptionContext context)
+    {
+        var exception = (UnauthorizedException)context.Exception;
+
+        var details = new ProblemDetails
+        {
+            Title = "Unauthorized",
+            Status = 401
+        };
+
+        context.Result = new UnauthorizedObjectResult(details);
         context.ExceptionHandled = true;
     }
 }
