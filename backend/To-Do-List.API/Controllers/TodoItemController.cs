@@ -1,17 +1,17 @@
 ﻿using To_Do_List.Application.Common.Exceptions;
 using To_Do_List.Application.Common.Helpers;
 using To_Do_List.Application.Common.Filters;
+using Microsoft.AspNetCore.Authorization;
 using To_Do_List.Application.Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Identity;
 using To_Do_List.Application.DTOs;
 using To_Do_List.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using To_Do_List.API.Contracts;
 using To_Do_List.Domain.Models;
 using To_Do_List.Domain.Enums;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using To_Do_List.API.Contracts;
 
 namespace To_Do_List.API.Controllers;
 

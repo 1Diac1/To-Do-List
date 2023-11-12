@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,6 +26,35 @@ public static class ServiceExtensions
             });
 
         services.AddAuthorization();
+        
+        return services;
+    }
+
+    public static IServiceCollection ConfigureGoogleAuthentication(this IServiceCollection services)
+    {
+        services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+        })
+            .AddGoogle(options =>
+            {
+                options.ClientId = "219229931408-0cj4jdphc9dnt3nhggpvkgfudrl5f7up.apps.googleusercontent.com";
+                options.ClientSecret = "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";
+            });
+        
+        return services;
+    }
+
+    public static IServiceCollection ConfigureCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", builder =>
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+        });
         
         return services;
     }

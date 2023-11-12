@@ -8,9 +8,11 @@ using To_Do_List.Application;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructureServices();
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.ConfigureJwtAuthentication();
+builder.Services.ConfigureGoogleAuthentication();
+builder.Services.ConfigureCors();   
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true);
@@ -29,6 +31,8 @@ var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("AllowAll");
 
 app.MapControllers();
 
