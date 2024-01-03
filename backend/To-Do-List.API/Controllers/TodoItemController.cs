@@ -16,7 +16,7 @@ using AutoMapper;
 namespace To_Do_List.API.Controllers;
 
 [ApiController]
-[Authorize]
+//[Authorize]
 public class TodoItemController : ControllerBase
 {
     private readonly ITodoItemService _todoItemService;
