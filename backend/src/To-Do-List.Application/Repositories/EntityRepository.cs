@@ -11,7 +11,7 @@ public class EntityRepository<TEntity> : IEntityRepository<TEntity>
 {
     protected readonly IApplicationDbContext DbContext;
 
-    protected EntityRepository(IApplicationDbContext dbContext)
+    public EntityRepository(IApplicationDbContext dbContext)
     {
         this.DbContext = dbContext;
     }
