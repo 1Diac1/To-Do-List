@@ -22,6 +22,7 @@ public class EntityRepositoryTests
         // arrange
         var repository = await GetRepositoryAsync();
         
+        
         // act
         var entities = await repository.GetAllAsync();
         

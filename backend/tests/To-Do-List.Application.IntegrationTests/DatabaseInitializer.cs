@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using To_Do_List.Domain.Entities;
 using To_Do_List.Domain.Enums;
 using System.Drawing;
+using AutoFixture;
 
 namespace To_Do_List.Application.IntegrationTests;
 
@@ -26,6 +27,7 @@ public static class DatabaseInitializer
             PriorityLevel = TodoPriorityLevel.Low,
             StatusTask = TodoStatusTask.Completed,
             UserId = Guid.Parse("9f6dfb3f-2c22-4c2c-9b9e-4f96e9f969f8"),
+            DueDate = DateTime.Parse("05/01/2024"),
             Tags = new List<TodoTag>()
             {
                 new TodoTag()
@@ -44,5 +46,12 @@ public static class DatabaseInitializer
         await context.SaveChangesAsync();
 
         return dbContextOptions;
+    }
+
+    public static DbContextOptions<ApplicationDbContext> GetDbContextOptions(string databaseName)
+    {
+        return new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: databaseName)
+            .Options;
     }
 }
