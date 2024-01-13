@@ -155,7 +155,7 @@ public class TodoItemController : ControllerBase
     }
 
     [HttpPost(ApiRoutes.TodoItem.Create)]
-    [ServiceFilter(typeof(AuthorizationFilter))]
+    //[ServiceFilter(typeof(AuthorizationFilter))]
     public async Task<BaseResponse> CreateAsync([FromBody] TodoItemDTO entity)
     {
         if (entity is null)
