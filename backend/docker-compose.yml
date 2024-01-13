@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  todo-api:
+    build:
+      context: .
+      dockerfile: src/To-Do-List.API/Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Development"
+    volumes:
+      - ../src:/app
+      - todo-db:/app/Data
+
+volumes:
+  todo-db: {}
