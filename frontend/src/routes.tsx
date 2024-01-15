@@ -5,16 +5,20 @@ import AuthPage from "./pages/AuthPage.tsx";
 export const useRoutes = (isLogin: boolean) => {
     if(isLogin){
         return (
-            <Routes>
-                <Route path='/' element={<MainPage/>} />
+            <>
                 <Navigate to='/' />
-            </Routes>
+                <Routes>
+                    <Route path='/' element={<MainPage/>}/>
+                </Routes>
+            </>
         )
     }
     return (
-        <Routes>
-            <Route path='/login' element={<AuthPage/>} />
+        <>
             <Navigate to='/login' />
-        </Routes>
+            <Routes>
+                <Route path='/login' element={<AuthPage/>} />
+            </Routes>
+        </>
     )
 }

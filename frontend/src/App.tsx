@@ -1,33 +1,23 @@
 import './App.css'
 import {BrowserRouter} from "react-router-dom";
 import {useRoutes} from "./routes.tsx";
-import {AuthContext} from "./context/authcontext.ts";
-import {useAuth} from "./hooks/useAuth.ts";
-import {authType} from "./types.ts";
+import {GoogleOAuthProvider} from '@react-oauth/google'
+
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
 function App() {
 
-  const {login, logout, token, userId} = useAuth()
-
-
-
-  const isLogin: boolean = !!token
+  const isLogin: boolean = false
   const routes = useRoutes(isLogin)
+    console.log(clientId)
 
-  const userData: authType = {
-    login,
-    logout,
-    token,
-    userId,
-    isLogin,
-  }
 
   return (
-      <AuthContext.Provider value={userData}>
-    <BrowserRouter>
-      {routes}
-    </BrowserRouter>
-      </AuthContext.Provider>
+      <GoogleOAuthProvider clientId={clientId}>
+        <BrowserRouter>
+          {routes}
+        </BrowserRouter>
+      </GoogleOAuthProvider>
   )
 }
 
