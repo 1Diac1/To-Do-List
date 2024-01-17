@@ -1,11 +1,16 @@
 import {GoogleLogin} from "@react-oauth/google";
-import {jwtDecode} from "jwt-decode";
+import {jwtDecode, JwtPayload} from "jwt-decode";
+
+interface googleRes extends JwtPayload{
+    picture: string
+    name: string
+}
 
 const Login = () => {
 
     const onSuccess = (creadentialResponse: any) => {
-        const decodedCredential = jwtDecode(creadentialResponse.credential)
-        console.log(decodedCredential);
+        const decodedCredential: googleRes = jwtDecode(creadentialResponse.credential)
+        console.log(decodedCredential.name, decodedCredential.picture);
     }
 
     const onFailure = () => {

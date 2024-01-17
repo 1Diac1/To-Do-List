@@ -9,7 +9,6 @@ function App() {
 
   const isLogin: boolean = false
   const routes = useRoutes(isLogin)
-    console.log(clientId)
 
 
   return (
