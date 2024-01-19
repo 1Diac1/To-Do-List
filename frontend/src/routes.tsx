@@ -6,19 +6,19 @@ export const useRoutes = (isLogin: boolean) => {
     if(isLogin){
         return (
             <>
-                <Navigate to='/' />
                 <Routes>
                     <Route path='/' element={<MainPage/>}/>
                 </Routes>
+                <Navigate to='/' />
             </>
         )
     }
     return (
         <>
-            <Navigate to='/login' />
             <Routes>
                 <Route path='/login' element={<AuthPage/>} />
             </Routes>
+            <Navigate to='/login' />
         </>
     )
 }
