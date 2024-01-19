@@ -7,7 +7,7 @@ const NavBar = () => {
     const [userName, userPicture] = useUnit([$userName, $userPicture]);
 
     return (
-        <div className='w-full h-content flex items-center bg-white rounded-xl p-3'>
+        <div className='w-full h-content flex items-center bg-white rounded-xl p-3 justify-around'>
             <div className='flex items-center flex-1'>
                 <div>
                 <img className='rounded-full' src={userPicture} alt={'Avatar'}/>

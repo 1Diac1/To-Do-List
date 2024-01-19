@@ -16,7 +16,6 @@ const Login = () => {
 
     const onSuccess = (creadentialResponse: CredentialResponse) => {
         const decodedCredential: googleRes = jwtDecode(creadentialResponse.credential!)
-        console.log(decodedCredential)
         if(decodedCredential.name) {
             setLogin(true)
             setName(decodedCredential.name)
